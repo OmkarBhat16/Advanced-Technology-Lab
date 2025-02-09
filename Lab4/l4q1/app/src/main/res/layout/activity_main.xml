@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Question 1 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. What is the capital of France?"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/question1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/q1a1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="London"/>
+
+            <RadioButton
+                android:id="@+id/q1a2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Paris"/>
+
+            <RadioButton
+                android:id="@+id/q1a3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Berlin"/>
+        </RadioGroup>
+
+        <!-- Question 2 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2. Which planet is closest to the Sun?"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/question2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/q2a1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Venus"/>
+
+            <RadioButton
+                android:id="@+id/q2a2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mars"/>
+
+            <RadioButton
+                android:id="@+id/q2a3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mercury"/>
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Quiz"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
