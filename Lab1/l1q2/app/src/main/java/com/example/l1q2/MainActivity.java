@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailEditText, mobileEditText, passwordEditText;
     private Button submitButton;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

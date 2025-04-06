@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
                 groceryItems
         );
 
+
+
         listViewGrocery.setAdapter(adapter);
 
         // Handle item selection
