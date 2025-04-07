@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:background="@android:color/white">
 
     <EditText
-        android:id="@+id/etFrom"
+        android:id="@+id/nameInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Departure City"/>
+        android:hint="Enter your name"
+        android:layout_marginBottom="16dp"
+        android:inputType="textPersonName"/>
 
-    <EditText
-        android:id="@+id/etTo"
+    <Spinner
+        android:id="@+id/flightSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Destination City"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginBottom="16dp"/>
 
     <Button
-        android:id="@+id/btnSearch"
+        android:id="@+id/bookButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Flights"
-        android:layout_marginTop="16dp"/>
+        android:text="Book Flight"
+        android:layout_marginBottom="16dp"/>
 
-    <ListView
-        android:id="@+id/listFlights"
+    <TextView
+        android:id="@+id/statusText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:padding="8dp"/>
 </LinearLayout>
