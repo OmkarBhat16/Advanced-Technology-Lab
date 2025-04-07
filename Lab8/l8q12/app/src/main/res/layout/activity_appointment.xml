@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <Spinner
+            android:id="@+id/doctorSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/pickDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick Date and Time"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/selectedDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No slot selected"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp" />
+
+        <Button
+            android:id="@+id/book"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Book Appointment"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+</ScrollView>

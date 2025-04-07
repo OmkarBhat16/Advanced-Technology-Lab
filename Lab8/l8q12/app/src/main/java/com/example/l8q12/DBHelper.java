@@ -1,103 +1,71 @@
 package com.example.l8q12;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "ClinicDB";
-    private static final int DB_VERSION = 1;
-
-    // Users Table
-    public static final String TABLE_USERS = "users";
-    public static final String COL_ID = "id";
-    public static final String COL_NAME = "name";
-    public static final String COL_EMAIL = "email";
-    public static final String COL_PASSWORD = "password";
-    public static final String COL_ROLE = "role";
-
-    // Appointments Table
-    public static final String TABLE_APPOINTMENTS = "appointments";
-    public static final String COL_DATETIME = "datetime";
-    public static final String COL_DOCTOR_ID = "doctor_id";
-    public static final String COL_PATIENT_ID = "patient_id";
-    public static final String COL_STATUS = "status";
-
     public DBHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, "clinic.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create users table
-        String createUsers = "CREATE TABLE " + TABLE_USERS + " (" +
-                COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_NAME + " TEXT, " +
-                COL_EMAIL + " TEXT UNIQUE, " +
-                COL_PASSWORD + " TEXT, " +
-                COL_ROLE + " TEXT)";
-        db.execSQL(createUsers);
+        db.execSQL("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT)");
+        db.execSQL("CREATE TABLE doctors(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
+        db.execSQL("CREATE TABLE appointments(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, doctor_id INTEGER, datetime TEXT)");
 
-        // Create appointments table
-        String createAppointments = "CREATE TABLE " + TABLE_APPOINTMENTS + " (" +
-                COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_DOCTOR_ID + " INTEGER, " +
-                COL_PATIENT_ID + " INTEGER, " +
-                COL_DATETIME + " TEXT, " +
-                COL_STATUS + " TEXT DEFAULT 'Pending')";
-        db.execSQL(createAppointments);
-
-        // Insert sample doctor
-        ContentValues values = new ContentValues();
-        values.put(COL_NAME, "Dr. Smith");
-        values.put(COL_EMAIL, "doctor@clinic.com");
-        values.put(COL_PASSWORD, "doctor123");
-        values.put(COL_ROLE, "doctor");
-        db.insert(TABLE_USERS, null, values);
+        db.execSQL("INSERT INTO users(email, password) VALUES('user@test.com','123456')");
+        db.execSQL("INSERT INTO doctors(name) VALUES('Dr. Smith'), ('Dr. Adams')");
     }
 
-    // Add user registration method
-    public boolean registerUser(String name, String email, String password, String role) {
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS users");
+        db.execSQL("DROP TABLE IF EXISTS doctors");
+        db.execSQL("DROP TABLE IF EXISTS appointments");
+        onCreate(db);
+    }
+
+    public boolean checkUser(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM users WHERE email=? AND password=?", new String[]{email, password});
+        return c.getCount() > 0;
+    }
+
+    public List<String> getAllDoctorNames() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM doctors", null);
+        List<String> names = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                names.add(c.getString(0));
+            } while (c.moveToNext());
+            c.close();
+        }
+        return names;
+    }
+
+
+    public boolean bookAppointment(String email, String doctorName, String datetime) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_NAME, name);
-        values.put(COL_EMAIL, email);
-        values.put(COL_PASSWORD, password);
-        values.put(COL_ROLE, role);
-        long result = db.insert(TABLE_USERS, null, values);
-        return result != -1;
-    }
+        Cursor userCursor = db.rawQuery("SELECT id FROM users WHERE email=?", new String[]{email});
+        Cursor doctorCursor = db.rawQuery("SELECT id FROM doctors WHERE name=?", new String[]{doctorName});
+        if (userCursor.moveToFirst() && doctorCursor.moveToFirst()) {
+            int userId = userCursor.getInt(0);
+            int doctorId = doctorCursor.getInt(0);
 
-    // Check user credentials
-    public Cursor checkUser(String email, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_USERS +
-                        " WHERE " + COL_EMAIL + "=? AND " + COL_PASSWORD + "=?",
-                new String[]{email, password});
-    }
-
-    // Book appointment
-    public boolean bookAppointment(int doctorId, int patientId, String datetime) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_DOCTOR_ID, doctorId);
-        values.put(COL_PATIENT_ID, patientId);
-        values.put(COL_DATETIME, datetime);
-        long result = db.insert(TABLE_APPOINTMENTS, null, values);
-        return result != -1;
-    }
-
-    // Get available doctors
-    public Cursor getDoctors() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_USERS +
-                " WHERE " + COL_ROLE + "='doctor'", null);
-    }
-
-    // Check appointment availability
-    public boolean isSlotAvailable(int doctorId, String datetime) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_APPOINTMENTS +
-                        " WHERE " + COL_DOCTOR_ID + "=? AND " + COL_DATETIME + "=?",
-                new String[]{String.valueOf(doctorId), datetime});
-        boolean available = cursor.getCount() == 0;
-        cursor.close();
-        return available;
+            Cursor check = db.rawQuery("SELECT * FROM appointments WHERE doctor_id=? AND datetime=?", new String[]{String.valueOf(doctorId), datetime});
+            if (check.getCount() == 0) {
+                db.execSQL("INSERT INTO appointments(user_id, doctor_id, datetime) VALUES(?,?,?)",
+                        new Object[]{userId, doctorId, datetime});
+                return true;
+            }
+        }
+        return false;
     }
 }
